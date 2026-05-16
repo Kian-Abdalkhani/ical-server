@@ -25,7 +25,6 @@ func calendarHandler(w http.ResponseWriter, r *http.Request) {
 
 	var events_list []event.Event
 	// events := getEventsFromDB() //pull events from DB
-	events_list = append(events_list)
 	fmt.Fprint(w, render.RenderICS(events_list))
 }
 
