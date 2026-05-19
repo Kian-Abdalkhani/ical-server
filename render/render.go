@@ -21,10 +21,10 @@ func RenderICS(events []event.Event) string {
 		b.WriteString("BEGIN:VEVENT\r\n")
 		fmt.Fprintf(&b,
 			"UID:%s\r\nDTSTAMP:%s\r\nSUMMARY:%s\r\nDESCRIPTION:%s\r\nDTSTART:%s\r\nDTEND:%s\r\n",
-			e.UID, now,
+			e.UUID, now,
 			e.Summary, e.Description,
-			e.Start.Time.UTC().Format("20060102T150405Z"),
-			e.End.Time.UTC().Format("20060102T150405Z"),
+			e.Start.ICS(),
+			e.End.ICS(),
 		)
 		b.WriteString("END:VEVENT\r\n")
 	}

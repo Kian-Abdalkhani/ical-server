@@ -2,39 +2,19 @@ package event
 
 import (
 	"fmt"
-	"strings"
 	"time"
 
 	"example.com/ical/db"
 )
 
-type CustomTime struct {
-	time.Time
-}
-
-func (ct *CustomTime) UnmarshalJSON(b []byte) error {
-	s := strings.Trim(string(b), `"`)
-	layouts := []string{
-		time.RFC3339,
-		"2006-01-02T15:04",
-	}
-	for _, layout := range layouts {
-		if t, err := time.Parse(layout, s); err == nil {
-			ct.Time = t
-			return nil
-		}
-	}
-	return fmt.Errorf("cannot parse time %q", s)
-}
-
 type Event struct {
-	UUID        string    `json:"uuid" db:"uuid"`
-	Summary     string    `json:"summary" db:"summary"`
-	Location    string    `json:"location" db:"location"`
-	Description string    `json:"description" db:"description"`
-	Start       time.Time `json:"start" db:"start"`
-	End         time.Time `json:"end" db:"end"`
-	CreatedAt   time.Time `db:"created_at"`
+	UUID        string     `json:"uuid" db:"uuid"`
+	Summary     string     `json:"summary" db:"summary"`
+	Location    string     `json:"location" db:"location"`
+	Description string     `json:"description" db:"description"`
+	Start       CustomTime `json:"start" db:"start"`
+	End         CustomTime `json:"end" db:"end"`
+	CreatedAt   time.Time  `db:"created_at"`
 }
 
 func NewEvent(uuid string, summmary string, location string, description string, start time.Time, end time.Time) *Event {
@@ -43,9 +23,9 @@ func NewEvent(uuid string, summmary string, location string, description string,
 		Summary:     summmary,
 		Location:    location,
 		Description: description,
-		Start:       start,
-		End:         end,
-		CreatedAt:   time.Now(),
+		Start:       CustomTime{start.UTC()},
+		End:         CustomTime{end.UTC()},
+		CreatedAt:   time.Now().UTC(),
 	}
 }
 
@@ -108,11 +88,18 @@ func (e *Event) Update() error {
 }
 
 func (e *Event) Save() error {
+
+	// if event already exists in the database
+	_, err := GetEventByID(e.UUID)
+	if err == nil {
+		return fmt.Errorf("event id already exists in database")
+	}
+
 	insertSQL := `INSERT INTO events(
 	uuid, summary, location, description, start, end, created_at
 	) VALUES (?, ?, ?, ?, ?, ?, ?)`
 
-	_, err := db.DB.Exec(
+	_, err = db.DB.Exec(
 		insertSQL,
 		e.UUID, e.Summary, e.Location,
 		e.Description, e.Start, e.End,

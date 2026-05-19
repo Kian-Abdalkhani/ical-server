@@ -10,7 +10,6 @@ import (
 )
 
 func Handle() {
-
 	// Serves static frontend files
 	http.HandleFunc("/", webUIHandler)
 
@@ -33,6 +32,11 @@ func webUIHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func eventHandler(w http.ResponseWriter, r *http.Request) {
+	info, err := r.Body.Read([]byte("summary"))
+	if err != nil {
+		fmt.Fprintf(w, "Error, unable to parse response body")
+	}
+	fmt.Printf("%v", info)
 	var created_event event.Event
 	if err := json.NewDecoder(r.Body).Decode(&created_event); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
