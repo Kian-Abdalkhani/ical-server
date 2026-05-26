@@ -5,10 +5,10 @@ import (
 	"strings"
 	"time"
 
-	"example.com/ical/event"
+	"example.com/ical/db"
 )
 
-func RenderICS(events []event.Event) string {
+func RenderICS(events []db.Event) string {
 	now := time.Now().UTC().Format("20060102T150405Z")
 	var b strings.Builder
 	b.WriteString("BEGIN:VCALENDAR\r\n")

@@ -1,0 +1,38 @@
+package components
+
+import (
+	"example.com/ical/db"
+	"database/sql"
+)
+
+func nullString(ns sql.NullString) string {
+	if ns.Valid {
+		return ns.String
+	}
+	return ""
+}
+
+templ EventRow(e db.Event) {
+	<tr id={ "event-" + e.UUID } class="hover:bg-gray-50">
+		<td class="px-4 py-3">{ e.Summary }</td>
+		<td class="px-4 py-3">{ nullString(e.Location) }</td>
+		<td class="px-4 py-3">{ e.Description }</td>
+		<td class="px-4 py-3">{ e.Start.Time.Format("2006-01-02 15:04") }</td>
+		<td class="px-4 py-3">{ e.End.Time.Format("2006-01-02 15:04") }</td>
+		<td class="px-4 py-3 flex gap-2">
+			<button
+				class="text-blue-600 hover:underline text-xs"
+				hx-get={ "/events/" + e.UUID + "/edit" }
+				hx-target={ "#event-" + e.UUID }
+				hx-swap="outerHTML"
+			>Edit</button>
+			<button
+				class="text-red-600 hover:underline text-xs"
+				hx-delete={ "/events/" + e.UUID }
+				hx-target={ "#event-" + e.UUID }
+				hx-swap="outerHTML"
+				hx-confirm="Delete this event?"
+			>Delete</button>
+		</td>
+	</tr>
+}

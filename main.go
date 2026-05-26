@@ -1,28 +1,45 @@
 package main
 
 import (
+	"cmp"
+	"context"
+	"database/sql"
+	_ "embed"
 	"fmt"
 	"net/http"
 	"os"
-	"strconv"
+
+	_ "modernc.org/sqlite"
 
 	"example.com/ical/db"
 	"example.com/ical/handlers"
 )
 
-func main() {
-	db.InitDB()
-	defer db.DB.Close()
+//go:embed schema.sql
+var ddl string
 
-	port, err := strconv.Atoi(os.Getenv("PORT"))
+func main() {
+	ctx := context.Background()
+
+	database, err := sql.Open("sqlite", ":memory:")
 	if err != nil {
-		port = 8080
+		panic(err)
 	}
 
-	addr := fmt.Sprintf("0.0.0.0:%d", port)
+	if _, err := database.ExecContext(ctx, ddl); err != nil {
+		panic(err)
+	}
 
-	handlers.Handle()
-	// Start LAN server on the specified port
-	fmt.Printf("Listening on port %d\n", port)
-	http.ListenAndServe(addr, nil)
+	queries := db.New(database)
+
+	port := cmp.Or(os.Getenv("PORT"), "8080")
+	addr := fmt.Sprintf("0.0.0.0:%s", port)
+
+	handlers.Handle(queries)
+	fmt.Printf("Listening on %s\n", addr)
+
+	err = http.ListenAndServe(addr, nil)
+	if err != nil {
+		panic(err.Error())
+	}
 }

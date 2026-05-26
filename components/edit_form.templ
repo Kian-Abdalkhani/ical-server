@@ -1,0 +1,79 @@
+package components
+
+import "example.com/ical/db"
+
+templ EditForm(e db.Event) {
+	<tr id={ "event-" + e.UUID } class="bg-yellow-50">
+		<td colspan="6" class="px-4 py-4">
+			<form
+				hx-put={ "/events/" + e.UUID }
+				hx-target={ "#event-" + e.UUID }
+				hx-swap="outerHTML"
+				class="grid grid-cols-1 gap-3 sm:grid-cols-3"
+			>
+				<div>
+					<label class="block text-xs font-medium text-gray-600 mb-1">Summary</label>
+					<input
+						class="w-full border border-gray-300 rounded px-2 py-1 text-sm"
+						type="text"
+						name="summary"
+						value={ e.Summary }
+						required
+					/>
+				</div>
+				<div>
+					<label class="block text-xs font-medium text-gray-600 mb-1">Location</label>
+					<input
+						class="w-full border border-gray-300 rounded px-2 py-1 text-sm"
+						type="text"
+						name="location"
+						value={ nullString(e.Location) }
+					/>
+				</div>
+				<div>
+					<label class="block text-xs font-medium text-gray-600 mb-1">Description</label>
+					<input
+						class="w-full border border-gray-300 rounded px-2 py-1 text-sm"
+						type="text"
+						name="description"
+						value={ e.Description }
+						required
+					/>
+				</div>
+				<div>
+					<label class="block text-xs font-medium text-gray-600 mb-1">Start</label>
+					<input
+						class="w-full border border-gray-300 rounded px-2 py-1 text-sm"
+						type="datetime-local"
+						name="start"
+						value={ e.Start.Time.UTC().Format("2006-01-02T15:04") }
+						required
+					/>
+				</div>
+				<div>
+					<label class="block text-xs font-medium text-gray-600 mb-1">End</label>
+					<input
+						class="w-full border border-gray-300 rounded px-2 py-1 text-sm"
+						type="datetime-local"
+						name="end"
+						value={ e.End.Time.UTC().Format("2006-01-02T15:04") }
+						required
+					/>
+				</div>
+				<div class="flex items-end gap-2">
+					<button
+						type="submit"
+						class="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700"
+					>Save</button>
+					<button
+						type="button"
+						class="text-gray-600 hover:underline text-sm"
+						hx-get={ "/events/" + e.UUID + "/row" }
+						hx-target={ "#event-" + e.UUID }
+						hx-swap="outerHTML"
+					>Cancel</button>
+				</div>
+			</form>
+		</td>
+	</tr>
+}

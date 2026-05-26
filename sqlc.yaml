@@ -1,0 +1,26 @@
+version: "2"
+sql:
+  - engine: "sqlite"
+    queries: "query.sql"
+    schema: "schema.sql"
+    gen:
+      go:
+        package: "db"
+        out: "db"
+        emit_json_tags: true
+        rename:
+          uuid: "UUID"
+          created_at: "CreatedAt"
+        overrides:
+          - column: "events.start"
+            go_type:
+              import: "example.com/ical/timetype"
+              type: "CustomTime"
+          - column: "events.end"
+            go_type:
+              import: "example.com/ical/timetype"
+              type: "CustomTime"
+          - column: "events.created_at"
+            go_type:
+              import: "example.com/ical/timetype"
+              type: "CustomTime"
