@@ -31,32 +31,24 @@ func EventList(events []db.Event) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div><h2 class=\"text-xl font-semibold mb-4\">Events</h2>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div><h2 class=\"text-xl font-semibold mb-4\">Events</h2><table class=\"w-full border-collapse bg-white shadow rounded-lg overflow-hidden\"><thead class=\"bg-gray-100 text-left text-sm font-semibold text-gray-600\"><tr><th class=\"px-4 py-3\">Summary</th><th class=\"px-4 py-3\">Location</th><th class=\"px-4 py-3\">Description</th><th class=\"px-4 py-3\">Start</th><th class=\"px-4 py-3\">End</th><th class=\"px-4 py-3\">Actions</th></tr></thead> <tbody id=\"event-list\" class=\"divide-y divide-gray-100 text-sm\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(events) == 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<p class=\"text-gray-500 italic\">No events yet. Create one above.</p>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<tr id=\"empty-row\"><td colspan=\"6\" class=\"px-4 py-6 text-center text-gray-500 italic\">No events yet. Create one above.</td></tr>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<table class=\"w-full border-collapse bg-white shadow rounded-lg overflow-hidden\"><thead class=\"bg-gray-100 text-left text-sm font-semibold text-gray-600\"><tr><th class=\"px-4 py-3\">Summary</th><th class=\"px-4 py-3\">Location</th><th class=\"px-4 py-3\">Description</th><th class=\"px-4 py-3\">Start</th><th class=\"px-4 py-3\">End</th><th class=\"px-4 py-3\">Actions</th></tr></thead> <tbody id=\"event-list\" class=\"divide-y divide-gray-100 text-sm\">")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
 			for _, e := range events {
 				templ_7745c5c3_Err = EventRow(e).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</tbody></table>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</tbody></table></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

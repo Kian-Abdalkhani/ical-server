@@ -7,7 +7,7 @@ templ CreateForm() {
 			hx-post="/events"
 			hx-target="#event-list"
 			hx-swap="beforeend"
-			hx-on::after-request="this.reset()"
+			hx-on::after-request="this.reset(); var el = document.getElementById('empty-row'); if(el) el.remove();"
 			class="grid grid-cols-1 gap-4 sm:grid-cols-2"
 		>
 			<div class="sm:col-span-2">

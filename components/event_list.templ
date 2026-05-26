@@ -5,26 +5,28 @@ import "example.com/ical/db"
 templ EventList(events []db.Event) {
 	<div>
 		<h2 class="text-xl font-semibold mb-4">Events</h2>
-		if len(events) == 0 {
-			<p class="text-gray-500 italic">No events yet. Create one above.</p>
-		} else {
-			<table class="w-full border-collapse bg-white shadow rounded-lg overflow-hidden">
-				<thead class="bg-gray-100 text-left text-sm font-semibold text-gray-600">
-					<tr>
-						<th class="px-4 py-3">Summary</th>
-						<th class="px-4 py-3">Location</th>
-						<th class="px-4 py-3">Description</th>
-						<th class="px-4 py-3">Start</th>
-						<th class="px-4 py-3">End</th>
-						<th class="px-4 py-3">Actions</th>
+		<table class="w-full border-collapse bg-white shadow rounded-lg overflow-hidden">
+			<thead class="bg-gray-100 text-left text-sm font-semibold text-gray-600">
+				<tr>
+					<th class="px-4 py-3">Summary</th>
+					<th class="px-4 py-3">Location</th>
+					<th class="px-4 py-3">Description</th>
+					<th class="px-4 py-3">Start</th>
+					<th class="px-4 py-3">End</th>
+					<th class="px-4 py-3">Actions</th>
+				</tr>
+			</thead>
+			<tbody id="event-list" class="divide-y divide-gray-100 text-sm">
+				if len(events) == 0 {
+					<tr id="empty-row">
+						<td colspan="6" class="px-4 py-6 text-center text-gray-500 italic">No events yet. Create one above.</td>
 					</tr>
-				</thead>
-				<tbody id="event-list" class="divide-y divide-gray-100 text-sm">
+				} else {
 					for _, e := range events {
 						@EventRow(e)
 					}
-				</tbody>
-			</table>
-		}
+				}
+			</tbody>
+		</table>
 	</div>
 }

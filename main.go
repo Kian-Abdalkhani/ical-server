@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"path/filepath"
 
 	_ "modernc.org/sqlite"
 
@@ -21,7 +22,12 @@ var ddl string
 func main() {
 	ctx := context.Background()
 
-	database, err := sql.Open("sqlite", ":memory:")
+	fn := filepath.Join(".", "data", "ical.db")
+	database, err := sql.Open("sqlite", fn)
+	if err != nil {
+		panic(err)
+	}
+	err = database.Ping()
 	if err != nil {
 		panic(err)
 	}
