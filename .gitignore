@@ -1,7 +1,4 @@
-data/
-
-AGENTS.md
-
-.env
-
+./data/
+./AGENTS.md
+./.env
 ./ical
