@@ -114,3 +114,38 @@ func TestScan(t *testing.T) {
 
 	}
 }
+
+func TestParseCustomTime(t *testing.T) {
+	tests := []struct {
+		name    string
+		input   string
+		want    CustomTime
+		wantErr bool
+	}{
+		// TODO: make more tests for strings that are entered into webUI and validated
+		{
+			name:    "invalid time test",
+			input:   "not a time",
+			want:    CustomTime{},
+			wantErr: true,
+		},
+	}
+
+	for _, tc := range tests {
+		ct, err := ParseCustomTime(tc.input)
+
+		if tc.wantErr {
+			if err == nil {
+				t.Fatal("expected error, got nil")
+			}
+			return
+		}
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+
+		if ct != tc.want {
+			t.Errorf("%s got %q, want %q", tc.name, ct.Time, tc.want)
+		}
+	}
+}
