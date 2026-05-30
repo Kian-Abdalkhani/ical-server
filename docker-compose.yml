@@ -1,0 +1,13 @@
+services:
+  ical:
+    container_name: ical
+    image: ical:latest
+    build: .
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./data:/app/data
+    environment:
+      - GO_ENV=production
+      - TZ=America/Los_Angeles
+    restart: unless-stopped
