@@ -129,6 +129,18 @@ func TestParseCustomTime(t *testing.T) {
 			want:    CustomTime{},
 			wantErr: true,
 		},
+		{
+			name:    "RFC3339 test",
+			input:   "",
+			want:    CustomTime{},
+			wantErr: false,
+		},
+		{
+			name:    "2006-01-02T15:04 format test",
+			input:   "",
+			want:    CustomTime{},
+			wantErr: false,
+		},
 	}
 
 	for _, tc := range tests {
