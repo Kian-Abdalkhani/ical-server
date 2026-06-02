@@ -9,14 +9,14 @@ ORDER BY start;
 -- name: CreateEvent :exec
 INSERT INTO events (
   uuid, summary, location,
-  description, start, end,
+  description, timezone, start, end,
   created_at
-) VALUES (?, ?, ?, ?, ?, ?, ?);
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?);
 
 -- name: UpdateEvent :exec
 UPDATE events
 SET summary = ?, location = ?,
-description = ?, start = ?, end = ?
+description = ?, timezone = ?, start = ?, end = ?
 WHERE uuid = ?;
 
 -- name: DeleteEvent :exec
