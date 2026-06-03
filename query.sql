@@ -9,9 +9,10 @@ ORDER BY start;
 -- name: CreateEvent :exec
 INSERT INTO events (
   uuid, summary, location,
-  description, timezone, start, end,
+  description, timezone, all_day,
+  start, end,
   created_at
-) VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 -- name: UpdateEvent :exec
 UPDATE events
