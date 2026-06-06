@@ -17,7 +17,7 @@ INSERT INTO events (
 -- name: UpdateEvent :exec
 UPDATE events
 SET summary = ?, location = ?,
-description = ?, timezone = ?, start = ?, end = ?
+description = ?, timezone = ?, all_day = ?, start = ?, end = ?
 WHERE uuid = ?;
 
 -- name: DeleteEvent :exec

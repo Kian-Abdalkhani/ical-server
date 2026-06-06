@@ -24,3 +24,7 @@ sql:
             go_type:
               import: "example.com/ical/timetype"
               type: "CustomTime"
+          - column: "events.timezone"
+            go_type: "string"
+          - column: "events.all_day"
+            go_type: "bool"

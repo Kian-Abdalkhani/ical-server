@@ -11,6 +11,8 @@ templ EventList(events []db.Event) {
 					<th class="px-4 py-3">Summary</th>
 					<th class="px-4 py-3">Location</th>
 					<th class="px-4 py-3">Description</th>
+					<th class="px-4 py-3">Timezone</th>
+					<th class="px-4 py-3">All Day</th>
 					<th class="px-4 py-3">Start</th>
 					<th class="px-4 py-3">End</th>
 					<th class="px-4 py-3">Actions</th>
@@ -19,7 +21,7 @@ templ EventList(events []db.Event) {
 			<tbody id="event-list" class="divide-y divide-gray-100 text-sm">
 				if len(events) == 0 {
 					<tr id="empty-row">
-						<td colspan="6" class="px-4 py-6 text-center text-gray-500 italic">No events yet. Create one above.</td>
+						<td colspan="8" class="px-4 py-6 text-center text-gray-500 italic">No events yet. Create one above.</td>
 					</tr>
 				} else {
 					for _, e := range events {

@@ -15,9 +15,10 @@ import (
 const createEvent = `-- name: CreateEvent :exec
 INSERT INTO events (
   uuid, summary, location,
-  description, start, end,
+  description, timezone, all_day,
+  start, end,
   created_at
-) VALUES (?, ?, ?, ?, ?, ?, ?)
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
 `
 
 type CreateEventParams struct {
@@ -25,6 +26,8 @@ type CreateEventParams struct {
 	Summary     string              `json:"summary"`
 	Location    sql.NullString      `json:"location"`
 	Description string              `json:"description"`
+	Timezone    string              `json:"timezone"`
+	AllDay      bool                `json:"all_day"`
 	Start       timetype.CustomTime `json:"start"`
 	End         timetype.CustomTime `json:"end"`
 	CreatedAt   timetype.CustomTime `json:"created_at"`
@@ -36,6 +39,8 @@ func (q *Queries) CreateEvent(ctx context.Context, arg CreateEventParams) error 
 		arg.Summary,
 		arg.Location,
 		arg.Description,
+		arg.Timezone,
+		arg.AllDay,
 		arg.Start,
 		arg.End,
 		arg.CreatedAt,
@@ -53,7 +58,7 @@ func (q *Queries) DeleteEvent(ctx context.Context, uuid string) error {
 }
 
 const getAllEvents = `-- name: GetAllEvents :many
-SELECT uuid, summary, location, description, start, "end", created_at FROM events
+SELECT uuid, summary, location, description, timezone, all_day, start, "end", created_at FROM events
 ORDER BY start
 `
 
@@ -71,6 +76,8 @@ func (q *Queries) GetAllEvents(ctx context.Context) ([]Event, error) {
 			&i.Summary,
 			&i.Location,
 			&i.Description,
+			&i.Timezone,
+			&i.AllDay,
 			&i.Start,
 			&i.End,
 			&i.CreatedAt,
@@ -89,7 +96,7 @@ func (q *Queries) GetAllEvents(ctx context.Context) ([]Event, error) {
 }
 
 const getEventByID = `-- name: GetEventByID :one
-SELECT uuid, summary, location, description, start, "end", created_at FROM events
+SELECT uuid, summary, location, description, timezone, all_day, start, "end", created_at FROM events
 WHERE uuid = ? LIMIT 1
 `
 
@@ -101,6 +108,8 @@ func (q *Queries) GetEventByID(ctx context.Context, uuid string) (Event, error) 
 		&i.Summary,
 		&i.Location,
 		&i.Description,
+		&i.Timezone,
+		&i.AllDay,
 		&i.Start,
 		&i.End,
 		&i.CreatedAt,
@@ -111,7 +120,7 @@ func (q *Queries) GetEventByID(ctx context.Context, uuid string) (Event, error) 
 const updateEvent = `-- name: UpdateEvent :exec
 UPDATE events
 SET summary = ?, location = ?,
-description = ?, start = ?, end = ?
+description = ?, timezone = ?, all_day = ?, start = ?, end = ?
 WHERE uuid = ?
 `
 
@@ -119,6 +128,8 @@ type UpdateEventParams struct {
 	Summary     string              `json:"summary"`
 	Location    sql.NullString      `json:"location"`
 	Description string              `json:"description"`
+	Timezone    string              `json:"timezone"`
+	AllDay      bool                `json:"all_day"`
 	Start       timetype.CustomTime `json:"start"`
 	End         timetype.CustomTime `json:"end"`
 	UUID        string              `json:"uuid"`
@@ -129,6 +140,8 @@ func (q *Queries) UpdateEvent(ctx context.Context, arg UpdateEventParams) error 
 		arg.Summary,
 		arg.Location,
 		arg.Description,
+		arg.Timezone,
+		arg.AllDay,
 		arg.Start,
 		arg.End,
 		arg.UUID,

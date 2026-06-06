@@ -4,7 +4,7 @@ import "example.com/ical/db"
 
 templ EditForm(e db.Event) {
 	<tr id={ "event-" + e.UUID } class="bg-yellow-50">
-		<td colspan="6" class="px-4 py-4">
+		<td colspan="8" class="px-4 py-4">
 			<form
 				hx-put={ "/events/" + e.UUID }
 				hx-target={ "#event-" + e.UUID }
@@ -40,26 +40,108 @@ templ EditForm(e db.Event) {
 						required
 					/>
 				</div>
-				<div>
+				<div class="sm:col-span-3">
+					<label class="block text-xs font-medium text-gray-600 mb-1" for={ "tz-" + e.UUID }>Timezone</label>
+					<select
+						class="w-full border border-gray-300 rounded px-2 py-1 text-sm"
+						id={ "tz-" + e.UUID }
+						name="timezone"
+						required
+					>
+						<option value="UTC" selected?={ e.Timezone == "UTC" || e.Timezone == "" }>UTC</option>
+						<option value="America/New_York" selected?={ e.Timezone == "America/New_York" }>America/New_York (Eastern)</option>
+						<option value="America/Chicago" selected?={ e.Timezone == "America/Chicago" }>America/Chicago (Central)</option>
+						<option value="America/Denver" selected?={ e.Timezone == "America/Denver" }>America/Denver (Mountain)</option>
+						<option value="America/Los_Angeles" selected?={ e.Timezone == "America/Los_Angeles" }>America/Los_Angeles (Pacific)</option>
+						<option value="America/Anchorage" selected?={ e.Timezone == "America/Anchorage" }>America/Anchorage (Alaska)</option>
+						<option value="Pacific/Honolulu" selected?={ e.Timezone == "Pacific/Honolulu" }>Pacific/Honolulu (Hawaii)</option>
+						<option value="America/Toronto" selected?={ e.Timezone == "America/Toronto" }>America/Toronto</option>
+						<option value="America/Vancouver" selected?={ e.Timezone == "America/Vancouver" }>America/Vancouver</option>
+						<option value="America/Sao_Paulo" selected?={ e.Timezone == "America/Sao_Paulo" }>America/Sao_Paulo</option>
+						<option value="Europe/London" selected?={ e.Timezone == "Europe/London" }>Europe/London</option>
+						<option value="Europe/Paris" selected?={ e.Timezone == "Europe/Paris" }>Europe/Paris</option>
+						<option value="Europe/Berlin" selected?={ e.Timezone == "Europe/Berlin" }>Europe/Berlin</option>
+						<option value="Europe/Moscow" selected?={ e.Timezone == "Europe/Moscow" }>Europe/Moscow</option>
+						<option value="Asia/Dubai" selected?={ e.Timezone == "Asia/Dubai" }>Asia/Dubai</option>
+						<option value="Asia/Kolkata" selected?={ e.Timezone == "Asia/Kolkata" }>Asia/Kolkata</option>
+						<option value="Asia/Shanghai" selected?={ e.Timezone == "Asia/Shanghai" }>Asia/Shanghai</option>
+						<option value="Asia/Tokyo" selected?={ e.Timezone == "Asia/Tokyo" }>Asia/Tokyo</option>
+						<option value="Asia/Seoul" selected?={ e.Timezone == "Asia/Seoul" }>Asia/Seoul</option>
+						<option value="Australia/Sydney" selected?={ e.Timezone == "Australia/Sydney" }>Australia/Sydney</option>
+						<option value="Pacific/Auckland" selected?={ e.Timezone == "Pacific/Auckland" }>Pacific/Auckland</option>
+					</select>
+				</div>
+				<div class="sm:col-span-3 flex items-center gap-3">
+					<input
+						class="h-4 w-4 rounded border border-gray-300 accent-blue-600 cursor-pointer"
+						type="checkbox"
+						id={ "ad-" + e.UUID }
+						name="all_day"
+						checked?={ e.AllDay }
+					/>
+					<label class="text-xs font-medium text-gray-600 cursor-pointer" for={ "ad-" + e.UUID }>All Day</label>
+				</div>
+				<div id={ "edit-start-wrap-" + e.UUID }>
 					<label class="block text-xs font-medium text-gray-600 mb-1">Start</label>
-					<input
-						class="w-full border border-gray-300 rounded px-2 py-1 text-sm"
-						type="datetime-local"
-						name="start"
-						value={ e.Start.Time.UTC().Format("2006-01-02T15:04") }
-						required
-					/>
+					if e.AllDay {
+						<input
+							class="w-full border border-gray-300 rounded px-2 py-1 text-sm"
+							type="date"
+							name="start"
+							value={ e.Start.Time.UTC().Format("2006-01-02") }
+							required
+						/>
+					} else {
+						<input
+							class="w-full border border-gray-300 rounded px-2 py-1 text-sm"
+							type="datetime-local"
+							name="start"
+							value={ e.Start.Time.UTC().Format("2006-01-02T15:04") }
+							required
+						/>
+					}
 				</div>
-				<div>
+				<div id={ "edit-end-wrap-" + e.UUID }>
 					<label class="block text-xs font-medium text-gray-600 mb-1">End</label>
-					<input
-						class="w-full border border-gray-300 rounded px-2 py-1 text-sm"
-						type="datetime-local"
-						name="end"
-						value={ e.End.Time.UTC().Format("2006-01-02T15:04") }
-						required
-					/>
+					if e.AllDay {
+						<input
+							class="w-full border border-gray-300 rounded px-2 py-1 text-sm"
+							type="date"
+							name="end"
+							value={ e.End.Time.UTC().Format("2006-01-02") }
+							required
+						/>
+					} else {
+						<input
+							class="w-full border border-gray-300 rounded px-2 py-1 text-sm"
+							type="datetime-local"
+							name="end"
+							value={ e.End.Time.UTC().Format("2006-01-02T15:04") }
+							required
+						/>
+					}
 				</div>
+				<div
+					data-edit-uuid={ e.UUID }
+					data-edit-toggle="1"
+				></div>
+				<script>
+					(function() {
+						var markers = document.querySelectorAll('[data-edit-toggle="1"]');
+						var div = markers[markers.length - 1];
+						var uid = div.getAttribute('data-edit-uuid');
+						var cb  = document.getElementById('ad-' + uid);
+						cb.addEventListener('change', function() {
+							var startInput = document.querySelector('#edit-start-wrap-' + uid + ' input');
+							var endInput   = document.querySelector('#edit-end-wrap-' + uid + ' input');
+							var type = this.checked ? 'date' : 'datetime-local';
+							startInput.value = '';
+							endInput.value   = '';
+							startInput.type  = type;
+							endInput.type    = type;
+						});
+					})();
+				</script>
 				<div class="flex items-end gap-2">
 					<button
 						type="submit"

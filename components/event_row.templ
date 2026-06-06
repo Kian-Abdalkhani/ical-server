@@ -17,8 +17,28 @@ templ EventRow(e db.Event) {
 		<td class="px-4 py-3">{ e.Summary }</td>
 		<td class="px-4 py-3">{ nullString(e.Location) }</td>
 		<td class="px-4 py-3">{ e.Description }</td>
-		<td class="px-4 py-3">{ e.Start.Time.Format("2006-01-02 15:04") }</td>
-		<td class="px-4 py-3">{ e.End.Time.Format("2006-01-02 15:04") }</td>
+		<td class="px-4 py-3">{ e.Timezone }</td>
+		<td class="px-4 py-3">
+			if e.AllDay {
+				<span class="text-xs font-medium text-blue-700 bg-blue-100 px-2 py-0.5 rounded">Yes</span>
+			} else {
+				<span class="text-xs text-gray-400">No</span>
+			}
+		</td>
+		<td class="px-4 py-3">
+			if e.AllDay {
+				{ e.Start.Time.UTC().Format("2006-01-02") }
+			} else {
+				{ e.Start.Time.Format("2006-01-02 15:04") }
+			}
+		</td>
+		<td class="px-4 py-3">
+			if e.AllDay {
+				{ e.End.Time.UTC().Format("2006-01-02") }
+			} else {
+				{ e.End.Time.Format("2006-01-02 15:04") }
+			}
+		</td>
 		<td class="px-4 py-3 flex gap-2">
 			<button
 				class="text-blue-600 hover:underline text-xs"

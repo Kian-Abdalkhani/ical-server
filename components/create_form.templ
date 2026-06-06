@@ -7,7 +7,7 @@ templ CreateForm() {
 			hx-post="/events"
 			hx-target="#event-list"
 			hx-swap="beforeend"
-			hx-on::after-request="this.reset(); var el = document.getElementById('empty-row'); if(el) el.remove();"
+			hx-on::after-request="this.reset(); var el = document.getElementById('empty-row'); if(el) el.remove(); var tz = Intl.DateTimeFormat().resolvedOptions().timeZone; var sel = this.querySelector('[name=timezone]'); for(var i=0;i<sel.options.length;i++){if(sel.options[i].value===tz){sel.selectedIndex=i;break;}}"
 			class="grid grid-cols-1 gap-4 sm:grid-cols-2"
 		>
 			<div class="sm:col-span-2">
@@ -40,16 +40,55 @@ templ CreateForm() {
 				/>
 			</div>
 			<div class="sm:col-span-2">
-				<label class="block text-sm font-medium text-gray-700 mb-1" for="start">All Day</label>
+				<label class="block text-sm font-medium text-gray-700 mb-1" for="timezone">Timezone</label>
+				<select
+					class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+					id="timezone"
+					name="timezone"
+					required
+				>
+					<option value="UTC">UTC</option>
+					<option value="America/New_York">America/New_York (Eastern)</option>
+					<option value="America/Chicago">America/Chicago (Central)</option>
+					<option value="America/Denver">America/Denver (Mountain)</option>
+					<option value="America/Los_Angeles">America/Los_Angeles (Pacific)</option>
+					<option value="America/Anchorage">America/Anchorage (Alaska)</option>
+					<option value="Pacific/Honolulu">Pacific/Honolulu (Hawaii)</option>
+					<option value="America/Toronto">America/Toronto</option>
+					<option value="America/Vancouver">America/Vancouver</option>
+					<option value="America/Sao_Paulo">America/Sao_Paulo</option>
+					<option value="Europe/London">Europe/London</option>
+					<option value="Europe/Paris">Europe/Paris</option>
+					<option value="Europe/Berlin">Europe/Berlin</option>
+					<option value="Europe/Moscow">Europe/Moscow</option>
+					<option value="Asia/Dubai">Asia/Dubai</option>
+					<option value="Asia/Kolkata">Asia/Kolkata</option>
+					<option value="Asia/Shanghai">Asia/Shanghai</option>
+					<option value="Asia/Tokyo">Asia/Tokyo</option>
+					<option value="Asia/Seoul">Asia/Seoul</option>
+					<option value="Australia/Sydney">Australia/Sydney</option>
+					<option value="Pacific/Auckland">Pacific/Auckland</option>
+				</select>
+				<script>
+					(function() {
+						var tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+						var sel = document.getElementById('timezone');
+						for (var i = 0; i < sel.options.length; i++) {
+							if (sel.options[i].value === tz) { sel.selectedIndex = i; break; }
+						}
+					})();
+				</script>
+			</div>
+			<div class="sm:col-span-2 flex items-center gap-3">
 				<input
 					class="h-4 w-4 rounded border border-gray-300 accent-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
 					type="checkbox"
 					id="all_day"
 					name="all_day"
-					required
 				/>
+				<label class="text-sm font-medium text-gray-700 cursor-pointer" for="all_day">All Day</label>
 			</div>
-			<div>
+			<div id="create-start-wrap">
 				<label class="block text-sm font-medium text-gray-700 mb-1" for="start">Start</label>
 				<input
 					class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -59,7 +98,7 @@ templ CreateForm() {
 					required
 				/>
 			</div>
-			<div>
+			<div id="create-end-wrap">
 				<label class="block text-sm font-medium text-gray-700 mb-1" for="end">End</label>
 				<input
 					class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -69,6 +108,17 @@ templ CreateForm() {
 					required
 				/>
 			</div>
+			<script>
+				document.getElementById('all_day').addEventListener('change', function() {
+					var startInput = document.querySelector('#create-start-wrap input');
+					var endInput   = document.querySelector('#create-end-wrap input');
+					var type = this.checked ? 'date' : 'datetime-local';
+					startInput.value = '';
+					endInput.value   = '';
+					startInput.type  = type;
+					endInput.type    = type;
+				});
+			</script>
 			<div class="sm:col-span-2">
 				<button
 					type="submit"

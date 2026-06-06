@@ -15,6 +15,8 @@ type Event struct {
 	Summary     string              `json:"summary"`
 	Location    sql.NullString      `json:"location"`
 	Description string              `json:"description"`
+	Timezone    string              `json:"timezone"`
+	AllDay      bool                `json:"all_day"`
 	Start       timetype.CustomTime `json:"start"`
 	End         timetype.CustomTime `json:"end"`
 	CreatedAt   timetype.CustomTime `json:"created_at"`

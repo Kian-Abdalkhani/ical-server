@@ -40,7 +40,7 @@ func (ct CustomTime) Value() (driver.Value, error) {
 func (ct *CustomTime) Scan(src any) error {
 	switch v := src.(type) {
 	case string:
-		for _, layout := range []string{time.RFC3339, "2006-01-02 15:04:05"} {
+		for _, layout := range []string{time.RFC3339, "2006-01-02 15:04:05", "2006-01-02"} {
 			if t, err := time.Parse(layout, v); err == nil {
 				ct.Time = t.UTC()
 				return nil
@@ -65,9 +65,27 @@ func (ct CustomTime) ICS() string {
 	return ct.UTC().Format("20060102T150405Z")
 }
 
-// ParseCustomTime parses a datetime-local string ("2006-01-02T15:04") or RFC3339 into a CustomTime.
+// ICSDate returns just the date portion per RFC 5545 VALUE=DATE format (for all-day events).
+func (ct CustomTime) ICSDate() string {
+	return ct.UTC().Format("20060102")
+}
+
+// ICSInLocation returns the time formatted per RFC 5545 in the given IANA timezone,
+// without a trailing Z (used with TZID= property parameter).
+// Falls back to UTC if the timezone name is invalid or empty.
+func (ct CustomTime) ICSInLocation(tz string) string {
+	if tz != "" {
+		if loc, err := time.LoadLocation(tz); err == nil {
+			return ct.In(loc).Format("20060102T150405")
+		}
+	}
+	return ct.UTC().Format("20060102T150405")
+}
+
+// ParseCustomTime parses a datetime-local string ("2006-01-02T15:04"), a date-only string
+// ("2006-01-02"), or RFC3339 into a CustomTime.
 func ParseCustomTime(s string) (CustomTime, error) {
-	for _, layout := range []string{time.RFC3339, "2006-01-02T15:04"} {
+	for _, layout := range []string{time.RFC3339, "2006-01-02T15:04", "2006-01-02"} {
 		if t, err := time.Parse(layout, s); err == nil {
 			return CustomTime{Time: t.UTC()}, nil
 		}
