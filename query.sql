@@ -1,11 +1,11 @@
 -- name: GetEventByID :one
 SELECT * FROM events
-WHERE end < datetime("now") AND uuid = ?
+WHERE end > datetime('now') AND uuid = ?
 LIMIT 1;
 
 -- name: GetAllEvents :many
 SELECT * FROM events
-WHERE end < datetime("now")
+WHERE end > datetime('now')
 ORDER BY start;
 
 -- name: CreateEvent :exec

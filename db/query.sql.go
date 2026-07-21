@@ -59,7 +59,7 @@ func (q *Queries) DeleteEvent(ctx context.Context, uuid string) error {
 
 const getAllEvents = `-- name: GetAllEvents :many
 SELECT uuid, summary, location, description, timezone, all_day, start, "end", created_at FROM events
-WHERE end < datetime("now")
+WHERE end > datetime('now')
 ORDER BY start
 `
 
@@ -98,7 +98,7 @@ func (q *Queries) GetAllEvents(ctx context.Context) ([]Event, error) {
 
 const getEventByID = `-- name: GetEventByID :one
 SELECT uuid, summary, location, description, timezone, all_day, start, "end", created_at FROM events
-WHERE end < datetime("now") AND uuid = ?
+WHERE end > datetime('now') AND uuid = ?
 LIMIT 1
 `
 
